@@ -8,7 +8,7 @@ from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
 def C(n: int, k: int) -> float:
-    """
+    """Sampling without replacement where order doesn't matter (Binomial Coefficient)
     """
         
     return math.comb(n, k)
