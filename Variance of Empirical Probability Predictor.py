@@ -4,6 +4,7 @@ import pandas as pd
 import math
 from sklearn import linear_model
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 
 
@@ -963,11 +964,14 @@ def predict(csv_file: str, hand: str):
     
     if hand == "High Card" or hand == "Single Pair":
     
-        data = df[[hand + " Theoretical Probability", hand +  " Empirical Probability Mean", hand + " Empirical Probability Variance", hand + " Absolute Empirical Max and Min Probability Range", hand + " High Deviation Intervals", hand + " Hand Occurrences Mean", hand + " Absolute Theoretical and Empirical Probability Difference Mean", hand + " Absolute Theoretical and Empirical Probability Variance", hand + " Skewness", hand + " Hand Occurrence Variance"]]
+        data = df[[hand + " Theoretical Probability", hand +  " Empirical Probability Mean", hand + " Empirical Probability Variance", hand + " Absolute Empirical Max and Min Probability Range", hand + " High Deviation Intervals", hand + " Hand Occurrences Mean", hand + " Absolute Theoretical and Empirical Probability Difference Mean", hand + " Absolute Theoretical and Empirical Probability Variance", hand + " Skewness", "Number of Trials"]]
     
-    elif hand == "Double Pair" or hand == "Three of a Kind" or hand == "Straight" or hand == "Flush":
+    elif hand == "Double Pair" or hand == "Three of a Kind" or hand == "Straight":
         
         data = df[[hand + " Theoretical Probability", hand +  " Empirical Probability Mean", hand + " Empirical Probability Variance", hand + " Absolute Empirical Max and Min Probability Range", hand + " High Deviation Intervals", hand + " Hand Occurrences Mean", hand + " Absolute Theoretical and Empirical Probability Difference Mean", hand + " Expected Hand Occurrences Per Interval", hand + " Absolute Theoretical and Empirical Probability Variance", hand + " Hand Occurrence Variance", hand + " Skewness"]]
+    
+    elif hand == "Flush":
+        data = df[[hand + " Theoretical Probability", hand +  " Empirical Probability Mean", hand + " Empirical Probability Variance", hand + " Absolute Empirical Max and Min Probability Range", hand + " Expected Hand Occurrences Per Interval", hand + " Absolute Theoretical and Empirical Probability Variance", hand + " Hand Occurrence Variance"]]
     
     elif hand == "Full House":
         data = df[[hand + " Theoretical Probability", hand +  " Empirical Probability Mean", hand + " Empirical Probability Variance", hand + " Absolute Empirical Max and Min Probability Range", hand + " High Deviation Intervals", hand + " Hand Occurrences Mean", hand + " Absolute Theoretical and Empirical Probability Difference Mean", hand + " Absolute Theoretical and Empirical Probability Variance", hand + " Skewness", "Number of Trials"]]
@@ -984,15 +988,21 @@ def predict(csv_file: str, hand: str):
     x = np.array(data.drop([predict], axis = 1))  # 1 implies dropping columns, 0 implies dropping rows
     y = np.array(data[predict])
     
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)  
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 42)
+    
+    scaler = StandardScaler()
+    
+    x_train_scaled = scaler.fit_transform(x_train)
+    
+    x_test_scaled = scaler.transform(x_test)
         
     linear = linear_model.LinearRegression()
-    linear.fit(x_train, y_train)
+    linear.fit(x_train_scaled, y_train)
         
-    predictions = linear.predict(x_test)
+    predictions = linear.predict(x_test_scaled)
     residuals = y_test - predictions    
         
-    accuracy = linear.score(x_test, y_test)
+    accuracy = linear.score(x_test_scaled, y_test)
     mse = mean_squared_error(y_test, predictions)
     mae = mean_absolute_error(y_test, predictions)
     rmse = np.sqrt(mse)
