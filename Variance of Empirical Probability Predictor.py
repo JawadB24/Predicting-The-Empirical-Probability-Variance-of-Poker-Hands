@@ -18,7 +18,7 @@ def C(n: int, k: int) -> float:
 class Card:
     
     def __init__(self, rank, suit):
-        """Instantiates a Card object
+        """Initializes a Card object
         
         """
         self.rank = rank
@@ -28,7 +28,7 @@ class Card:
 class CardDeck:
     
     def __init__(self):
-        """Instantiates a CardDeck object
+        """Initializes a CardDeck object
         
         """
         self.card_deck = []
@@ -80,7 +80,7 @@ class CardDeck:
 class PokerHand:
     
     def __init__(self):
-        """Instantiates a PokerHand object
+        """Initializes a PokerHand object
         
         """
         self.hand = []
